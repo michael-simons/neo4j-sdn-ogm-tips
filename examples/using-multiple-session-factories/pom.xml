@@ -1,109 +1,138 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.neo4j.tips.sdn</groupId>
-	<artifactId>using_multiple_session_factories</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+    <groupId>org.neo4j.tips.sdn</groupId>
+    <artifactId>using_multiple_session_factories</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-	<name>using-multiple-session-factories</name>
-	<description>Spring Boot project that makes use of Boots configuration mechanism to provide different session
-		factories.
-	</description>
+    <name>using-multiple-session-factories</name>
+    <description>Spring Boot project that makes use of Boots configuration mechanism to provide different session
+        factories.
+    </description>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.5.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.0.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 
-	<!-- tag::select-releasetrain[] -->
-	<properties>
-		<!-- end::select-releasetrain[] -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>10</java.version>
-		<neo4j-server.version>3.4.7</neo4j-server.version>
+    <!-- tag::select-releasetrain[] -->
+    <properties>
+        <!-- end::select-releasetrain[] -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>11</java.version>
+        <neo4j-server.version>4.0.4</neo4j-server.version>
 
-		<!-- tag::select-releasetrain[] -->
-		<spring-data-releasetrain.version>Lovelace-RELEASE</spring-data-releasetrain.version>
-	</properties>
-	<!-- end::select-releasetrain[] -->
+        <!-- tag::select-releasetrain[] -->
+        <spring-data-releasetrain.version>Moore-SR7</spring-data-releasetrain.version>
+    </properties>
+    <!-- end::select-releasetrain[] -->
 
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-neo4j</artifactId>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-neo4j</artifactId>
+        </dependency>
 
-		<!-- tag::spring-boot-configuration-processor[] -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<!-- end::spring-boot-configuration-processor[] -->
+        <!-- tag::spring-boot-configuration-processor[] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- end::spring-boot-configuration-processor[] -->
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>io.fabric8</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.26.1</version>
-				<configuration>
-					<images>
-						<image>
-							<name>neo4j:${neo4j-server.version}</name>
-							<alias>domain1</alias>
-							<run>
-								<env>
-									<NEO4J_AUTH>neo4j/domain1</NEO4J_AUTH>
-								</env>
-								<ports>
-									<port>7474:7474</port>
-									<port>7687:7687</port>
-								</ports>
-								<wait>
-									<log>(?s)Remote interface available at http://localhost:7474/</log>
-									<time>40000</time>
-								</wait>
-							</run>
-						</image>
-						<image>
-							<name>neo4j:${neo4j-server.version}</name>
-							<alias>domain2</alias>
-							<run>
-								<env>
-									<NEO4J_AUTH>neo4j/domain2</NEO4J_AUTH>
-									<NEO4J_dbms_connector_bolt_advertised__address>localhost:7688</NEO4J_dbms_connector_bolt_advertised__address>
-								</env>
-								<ports>
-									<port>7475:7474</port>
-									<port>7688:7687</port>
-								</ports>
-								<wait>
-									<log>(?s)Remote interface available at http://localhost:7474/</log>
-									<time>40000</time>
-								</wait>
-							</run>
-						</image>
-					</images>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.33.0</version>
+                <executions>
+                    <execution>
+                        <id>prepare-it</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>teardown-it</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>neo4j:${neo4j-server.version}</name>
+                            <alias>domain1</alias>
+                            <run>
+                                <env>
+                                    <NEO4J_AUTH>neo4j/domain1</NEO4J_AUTH>
+                                </env>
+                                <ports>
+                                    <port>7474:7474</port>
+                                    <port>7687:7687</port>
+                                </ports>
+                                <wait>
+                                    <log>(?s)Remote interface available at http://localhost:7474/</log>
+                                    <time>40000</time>
+                                </wait>
+                            </run>
+                        </image>
+                        <image>
+                            <name>neo4j:${neo4j-server.version}</name>
+                            <alias>domain2</alias>
+                            <run>
+                                <env>
+                                    <NEO4J_AUTH>neo4j/domain2</NEO4J_AUTH>
+                                    <NEO4J_dbms_connector_bolt_advertised__address>localhost:7688
+                                    </NEO4J_dbms_connector_bolt_advertised__address>
+                                </env>
+                                <ports>
+                                    <port>7475:7474</port>
+                                    <port>7688:7687</port>
+                                </ports>
+                                <wait>
+                                    <log>(?s)Remote interface available at http://localhost:7474/</log>
+                                    <time>40000</time>
+                                </wait>
+                            </run>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
